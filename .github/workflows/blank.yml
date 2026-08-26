@@ -3,31 +3,28 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4.5.0  # نسخه پایدار جدید
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
+    - name: Show project structure
+      run: ls -la
+
+    - name: Show gradle files
+      run: find . -name "*.gradle" -type f
+
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    - name: Build APK
-      run: ./gradlew assembleDebug --no-daemon
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4.3.0  # نسخه پایدار جدید
-      with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/*.apk
+    - name: Build APK with debug
+      run: ./gradlew assembleDebug --stacktrace --info
